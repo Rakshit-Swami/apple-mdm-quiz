@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Apple Deployment &amp; Management – Practice Test</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0a0e1a;
+  --surface:#0f1525;
+  --surface2:#161d30;
+  --border:#1e2a42;
+  --border2:#2a3a56;
+  --accent:#3b7cf6;
+  --accent2:#5b9af8;
+  --text:#e8edf5;
+  --text2:#8a9abf;
+  --text3:#5a6a8a;
+  --green:#22d37b;
+  --green-bg:rgba(34,211,123,0.1);
+  --red:#f75757;
+  --red-bg:rgba(247,87,87,0.1);
+  --amber:#f5a623;
+  --amber-bg:rgba(245,166,35,0.1);
+  --mono:'DM Mono',monospace;
+  --sans:'DM Sans',sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:24px 16px 60px;
+  background-image:radial-gradient(ellipse at 20% 0%,rgba(59,124,246,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 100%,rgba(91,154,248,0.05) 0%,transparent 60%);
+}
+
+.wrap{width:100%;max-width:760px}
+
+/* HEADER */
+.site-header{
+  display:flex;align-items:center;gap:14px;
+  padding:28px 0 32px;
+}
+.logo{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,#1a3a7a,#3b7cf6);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.logo svg{width:22px;height:22px;fill:#fff}
+.site-title{font-size:1.15rem;font-weight:600;letter-spacing:-0.01em;line-height:1.2}
+.site-sub{font-size:0.78rem;color:var(--text3);font-family:var(--mono);margin-top:2px}
+
+/* CARD */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:32px;
+}
+
+/* START SCREEN */
+.start-hero{text-align:center;padding:48px 32px 40px}
+.start-hero h2{font-size:1.6rem;font-weight:600;letter-spacing:-0.02em;margin-bottom:10px}
+.start-hero p{color:var(--text2);font-size:0.93rem;line-height:1.6;max-width:420px;margin:0 auto 32px}
+.start-options{
+  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:28px;
+}
+.start-options label{font-size:0.88rem;color:var(--text2)}
+.num-input{
+  width:72px;padding:8px 10px;border-radius:8px;
+  background:var(--surface2);border:1px solid var(--border2);
+  color:var(--text);font-size:0.95rem;font-family:var(--sans);
+  text-align:center;
+}
+.num-input:focus{outline:none;border-color:var(--accent)}
+
+.stats-row{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;
+}
+.stat-pill{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:99px;padding:7px 16px;
+  font-size:0.8rem;color:var(--text2);
+  display:flex;align-items:center;gap:6px;
+}
+.stat-pill strong{color:var(--text);font-weight:500}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 24px;border-radius:10px;
+  font-family:var(--sans);font-size:0.92rem;font-weight:500;
+  cursor:pointer;border:none;transition:opacity 0.15s,transform 0.1s;
+}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border2)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:0.35;cursor:not-allowed;pointer-events:none}
+.btn-sm{padding:7px 14px;font-size:0.83rem;border-radius:8px}
+
+/* QUIZ SCREEN */
+.quiz-top{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;flex-wrap:wrap;gap:10px;
+}
+.q-counter{font-family:var(--mono);font-size:0.82rem;color:var(--text3)}
+.q-counter span{color:var(--text);font-weight:500}
+.answered-badge{
+  font-size:0.78rem;color:var(--text3);font-family:var(--mono);
+  background:var(--surface2);border:1px solid var(--border);
+  padding:4px 12px;border-radius:99px;
+}
+
+/* PROGRESS BAR */
+.progress-bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-bottom:24px}
+.progress-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.3s}
+
+/* QUESTION */
+.question-type-badge{
+  display:inline-block;font-family:var(--mono);font-size:0.72rem;
+  padding:3px 10px;border-radius:6px;margin-bottom:14px;
+  background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,166,35,0.2);
+}
+.question-type-badge.single{background:rgba(59,124,246,0.1);color:var(--accent2);border-color:rgba(59,124,246,0.2)}
+.question-text{font-size:1.07rem;font-weight:500;line-height:1.6;margin-bottom:20px;color:var(--text)}
+
+/* OPTIONS */
+.options-list{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:20px}
+.option-item{position:relative}
+.option-item input{position:absolute;opacity:0;width:0;height:0}
+.option-label{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:13px 16px;border-radius:10px;cursor:pointer;
+  background:var(--surface2);border:1px solid var(--border);
+  transition:border-color 0.15s,background 0.15s;
+  font-size:0.93rem;line-height:1.5;
+}
+.option-label:hover{border-color:var(--border2);background:var(--surface)}
+.option-check{
+  width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border2);
+  flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.option-item input:checked + .option-label .option-check{
+  background:var(--accent);border-color:var(--accent);
+}
+.option-item input:checked + .option-label .option-check::after{
+  content:'';display:block;width:6px;height:6px;background:#fff;border-radius:50%;
+}
+/* checkbox style for multi */
+.multi-check{border-radius:4px !important}
+.option-item input:checked + .option-label .multi-check::after{
+  content:'';display:block;width:8px;height:6px;
+  border-left:2px solid #fff;border-bottom:2px solid #fff;
+  transform:rotate(-45deg) translate(1px,-1px);
+  border-radius:0 !important;background:none !important;
+}
+.option-item input:checked + .option-label{
+  border-color:var(--accent);background:rgba(59,124,246,0.08);
+}
+
+/* FEEDBACK (shown after answering) */
+.option-item.correct-ans .option-label{
+  border-color:var(--green) !important;background:var(--green-bg) !important;
+}
+.option-item.wrong-pick .option-label{
+  border-color:var(--red) !important;background:var(--red-bg) !important;
+}
+.option-item.missed-ans .option-label{
+  border-color:var(--amber) !important;background:var(--amber-bg) !important;
+}
+.option-item.correct-ans .option-check,.option-item.correct-ans .multi-check{
+  background:var(--green) !important;border-color:var(--green) !important;
+}
+.option-item.wrong-pick .option-check,.option-item.wrong-pick .multi-check{
+  background:var(--red) !important;border-color:var(--red) !important;
+}
+.option-item.wrong-pick .option-check::after,.option-item.wrong-pick .multi-check::after{content:none !important}
+
+.why-wrong{
+  font-size:0.78rem;color:var(--text2);
+  margin-top:6px;padding:8px 12px;
+  background:var(--surface);border-left:2px solid var(--red);
+  border-radius:0 6px 6px 0;line-height:1.5;
+}
+.why-correct-alt{
+  font-size:0.78rem;color:var(--text2);
+  margin-top:6px;padding:8px 12px;
+  background:var(--surface);border-left:2px solid var(--amber);
+  border-radius:0 6px 6px 0;line-height:1.5;
+}
+
+.feedback-box{
+  margin-top:16px;padding:16px;border-radius:10px;
+  background:var(--surface2);border:1px solid var(--border);
+}
+.feedback-box.pass{border-color:rgba(34,211,123,0.3);background:rgba(34,211,123,0.05)}
+.feedback-box.fail{border-color:rgba(247,87,87,0.3);background:rgba(247,87,87,0.05)}
+.fb-verdict{font-weight:600;font-size:0.9rem;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.fb-verdict.pass{color:var(--green)}
+.fb-verdict.fail{color:var(--red)}
+.fb-exp{font-size:0.87rem;color:var(--text2);line-height:1.6}
+
+/* QUIZ CONTROLS */
+.quiz-controls{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;flex-wrap:wrap;
+  padding-top:16px;border-top:1px solid var(--border);
+}
+.quiz-nav{display:flex;gap:8px}
+
+/* RESULT SCREEN */
+.result-header{text-align:center;padding:16px 0 28px}
+.score-circle{
+  width:100px;height:100px;border-radius:50%;
+  border:3px solid var(--accent);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  background:rgba(59,124,246,0.08);
+}
+.score-pct{font-size:1.8rem;font-weight:600;font-family:var(--mono);color:var(--accent2)}
+.score-label{font-size:0.7rem;color:var(--text3);font-family:var(--mono);margin-top:1px}
+.result-title{font-size:1.3rem;font-weight:600;margin-bottom:6px}
+.result-sub{font-size:0.88rem;color:var(--text2)}
+
+.result-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0;
+}
+.r-stat{
+  text-align:center;background:var(--surface2);border:1px solid var(--border);
+  padding:16px 10px;border-radius:12px;
+}
+.r-stat-val{font-size:1.35rem;font-weight:600;font-family:var(--mono)}
+.r-stat-val.g{color:var(--green)}
+.r-stat-val.r{color:var(--red)}
+.r-stat-val.a{color:var(--amber)}
+.r-stat-lbl{font-size:0.73rem;color:var(--text3);margin-top:3px}
+.result-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* REVIEW ACCORDION */
+.review-list{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+.review-item{
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;
+}
+.review-item-header{
+  display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;
+  background:var(--surface2);user-select:none;
+}
+.review-item-header:hover{background:var(--surface)}
+.ri-icon{
+  width:24px;height:24px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;
+}
+.ri-icon.pass{background:var(--green-bg);color:var(--green)}
+.ri-icon.fail{background:var(--red-bg);color:var(--red)}
+.ri-q{font-size:0.87rem;flex:1;line-height:1.4;color:var(--text2)}
+.ri-chevron{font-size:0.7rem;color:var(--text3);transition:transform 0.2s}
+.review-item.open .ri-chevron{transform:rotate(180deg)}
+.review-item-body{
+  display:none;padding:14px 16px;border-top:1px solid var(--border);
+  background:var(--surface);
+}
+.review-item.open .review-item-body{display:block}
+.rb-your,.rb-correct{font-size:0.85rem;margin-bottom:8px;display:flex;align-items:flex-start;gap:8px}
+.rb-tag{
+  font-size:0.7rem;font-family:var(--mono);padding:2px 7px;border-radius:4px;
+  flex-shrink:0;margin-top:2px;
+}
+.rb-tag.y-pass{background:var(--green-bg);color:var(--green)}
+.rb-tag.y-fail{background:var(--red-bg);color:var(--red)}
+.rb-tag.correct{background:rgba(59,124,246,0.1);color:var(--accent2)}
+.rb-exp{font-size:0.83rem;color:var(--text2);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+
+.hidden{display:none!important}
+
+@media(max-width:520px){
+  .card{padding:20px 16px}
+  .result-stats{grid-template-columns:repeat(3,1fr)}
+  .r-stat-val{font-size:1.1rem}
+  .start-hero{padding:32px 16px 28px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="site-header">
+  <div class="logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+    </svg>
+  </div>
+  <div>
+    <div class="site-title">Apple Deployment &amp; Management</div>
+    <div class="site-sub">Practice Test Simulator</div>
+  </div>
+</header>
+
+<!-- START SCREEN -->
+<section id="start-screen">
+  <div class="card">
+    <div class="start-hero">
+      <h2>Ready to test your knowledge?</h2>
+      <p>Questions are randomised each time. Multi-select questions let you choose multiple answers. Feedback appears immediately after each submission.</p>
+      <div class="stats-row">
+        <div class="stat-pill"><strong id="total-q-count">80</strong> total questions</div>
+        <div class="stat-pill"><strong id="multi-q-count">10</strong> multi-select</div>
+      </div>
+      <div class="start-options">
+        <label for="question-count-input">Number of questions:</label>
+        <input type="number" id="question-count-input" class="num-input" min="1" max="80" value="20"/>
+      </div>
+      <button class="btn btn-primary" id="start-btn">Start Quiz &rarr;</button>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ SCREEN -->
+<section id="quiz-screen" class="hidden">
+  <div class="card">
+    <div class="quiz-top">
+      <div class="q-counter">Question <span id="q-current">1</span> of <span id="q-total">20</span></div>
+      <div class="answered-badge" id="answered-badge">0 answered</div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+    </div>
+
+    <div id="q-type-badge" class="question-type-badge single">Single answer</div>
+    <div id="question-text" class="question-text"></div>
+    <ul id="options-list" class="options-list"></ul>
+
+    <div id="feedback-area"></div>
+
+    <div class="quiz-controls">
+      <div class="quiz-nav">
+        <button class="btn btn-secondary btn-sm" id="prev-btn">&larr; Prev</button>
+        <button class="btn btn-secondary btn-sm" id="next-btn">Next &rarr;</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-secondary btn-sm" id="check-btn">Check Answer</button>
+        <button class="btn btn-primary btn-sm" id="submit-btn">Submit Quiz</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULT SCREEN -->
+<section id="result-screen" class="hidden">
+  <div class="card">
+    <div class="result-header">
+      <div class="score-circle">
+        <div class="score-pct" id="score-pct">0%</div>
+        <div class="score-label">SCORE</div>
+      </div>
+      <div class="result-title" id="result-title">Quiz Complete</div>
+      <div class="result-sub" id="result-sub"></div>
+    </div>
+    <div class="result-stats">
+      <div class="r-stat"><div class="r-stat-val g" id="rs-correct">0</div><div class="r-stat-lbl">Correct</div></div>
+      <div class="r-stat"><div class="r-stat-val r" id="rs-wrong">0</div><div class="r-stat-lbl">Wrong</div></div>
+      <div class="r-stat"><div class="r-stat-val a" id="rs-skip">0</div><div class="r-stat-lbl">Skipped</div></div>
+    </div>
+    <div class="result-btns">
+      <button class="btn btn-secondary" id="review-btn">Review All Answers</button>
+      <button class="btn btn-primary" id="restart-btn">New Quiz</button>
+    </div>
+    <div id="review-list" class="review-list hidden"></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: 1,
+    text: "When a company buys Apple products directly from Apple, which ID does Apple give the company to track those purchases?",
+    options: [
+      "Organization ID",
+      "Reseller Number",
+      "D-U-N-S Number",
+      "Apple Customer Number"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Apple uses the Apple Customer Number as the unique identifier for organizations that purchase hardware and software directly from Apple."
+  },
+  {
+    id: 2,
+    text: "On a managed Mac, which feature keeps the local user account password in step with the password from the cloud identity provider?",
+    options: [
+      "VPN client",
+      "LDAP binding",
+      "Kerberos tickets only",
+      "Platform SSO"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Platform SSO is designed so that the Mac user account password stays aligned with the identity provider, reducing password drift and extra prompts."
+  },
+  {
+    id: 3,
+    text: "You manually added Apple devices to Apple Business Manager via Apple Configurator for iPhone. When does the 30-day provisional period start?",
+    options: [
+      "After you assign the device to a location",
+      "After the device enrolls in the device management system",
+      "After the device becomes available in Apple Business Manager or Apple School Manager",
+      "After you assign the devices to the device management service"
+    ],
+    correctIndex: 2,
+    explanation:
+      "The 30-day provisional period begins as soon as the device appears as available in Apple Business Manager or Apple School Manager, not at enrollment or assignment."
+  },
+  {
+    id: 4,
+    text: "Which threat does Managed Device Attestation primarily defend against?",
+    options: [
+      "An unauthorized user injecting malicious code during a software update",
+      "A compromised device disabling Activation Lock",
+      "Bypassing kernel permissions to allow writes to protected system files",
+      "A compromised device sending another device's identifiers"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Managed Device Attestation verifies that the device identifiers presented to a server actually come from the genuine device, preventing a compromised device from spoofing another device's identity."
+  },
+  {
+    id: 5,
+    text: "Which VPN connection type requires the device to be supervised?",
+    options: [
+      "Always On VPN",
+      "VPN On Demand",
+      "Per-app VPN",
+      "Custom VPN"
+    ],
+    correctIndex: 0,
+    explanation:
+      "Always On VPN requires supervision because it enforces that all traffic goes through VPN and cannot be bypassed by the user — a control only possible on supervised devices."
+  },
+  {
+    id: 6,
+    text: "Which Apple device supports all three enrollment types: User Enrollment, Device Enrollment, and Automated Device Enrollment?",
+    options: [
+      "Apple TV",
+      "Apple Vision Pro",
+      "HomePod",
+      "Apple Watch"
+    ],
+    correctIndex: 1,
+    explanation:
+      "Apple Vision Pro supports User Enrollment, Device Enrollment, and Automated Device Enrollment, making it the most flexible device for enrollment options among the choices listed."
+  },
+  {
+    id: 7,
+    text: "What is the recommended approach when organizing payloads across configuration profiles?",
+    options: [
+      "Combine all settings into one universal payload",
+      "Pack all payloads into a single profile",
+      "Spread payloads across multiple profiles that each contain fewer payloads",
+      "Assign payloads directly to the device management service configuration"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Using multiple profiles with fewer payloads each makes it easier to manage, update, and troubleshoot settings without affecting unrelated configurations."
+  },
+  {
+    id: 8,
+    text: "A user enrolled their iPhone via account-driven User Enrollment and backed it up to iCloud. Which type of data cannot be restored from that backup?",
+    options: [
+      "Configuration Profiles",
+      "Managed App data",
+      "Organization books",
+      "Biometric authentication (Face ID and Touch ID)"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Biometric data such as Face ID and Touch ID enrollments are stored securely in the Secure Enclave and are never included in backups, so they cannot be restored."
+  },
+  {
+    id: 9,
+    text: "It's your first time syncing Google Workspace accounts with Apple Business Manager, and you discover identical accounts already exist in both systems. What should you do?",
+    options: [
+      "Overwrite the Apple Business Manager Person ID with the Google Workspace account",
+      "Delete the Google Workspace account and resync",
+      "Merge the accounts",
+      "Delete the Apple Business Manager account and resync"
+    ],
+    correctIndex: 2,
+    explanation:
+      "When duplicate accounts are found during the initial sync, the correct action is to merge them so no data is lost and the accounts are unified under a single identity."
+  },
+  {
+    id: 10,
+    text: "Which two features does Apple Configurator for Mac provide for device management? (Choose two)",
+    options: [
+      "Integrating its capabilities into existing device management workflows",
+      "Reviving or restoring iPhone, iPad, Apple TV, or Apple Vision Pro devices",
+      "Turning Activation Lock on and off on supervised devices",
+      "Creating custom firmware images for device deployment"
+    ],
+    correctIndex: null,
+    correctIndexes: [0, 1],
+    explanation:
+      "Apple Configurator for Mac can be integrated into existing device management workflows and can also revive or restore devices. It does not create custom firmware or directly toggle Activation Lock."
+  },
+  {
+    id: 11,
+    text: "During Setup Assistant, you configured device management to require a minimum OS version. What happens if a device doesn't meet that requirement at the activation stage?",
+    options: [
+      "The device fails enrollment and resets",
+      "The device updates automatically and resumes Setup Assistant",
+      "The device updates only after completing Setup Assistant",
+      "The device enrolls and is allowed to defer the update up to seven days"
+    ],
+    correctIndex: 1,
+    explanation:
+      "When a minimum OS version is enforced during Setup Assistant, a non-compliant device will automatically update and then resume the setup process without user intervention."
+  },
+  {
+    id: 12,
+    text: "Which roles in Apple Business Manager or Apple School Manager have the ability to manage federation?",
+    options: [
+      "Administrator and Location Manager",
+      "Device Enrollment Manager and Location Manager",
+      "Administrator and People Manager",
+      "Device Enrollment Manager and Content Manager"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Federation settings can only be managed by Administrators and People Managers in Apple Business Manager or Apple School Manager."
+  },
+  {
+    id: 13,
+    text: "Which two smart card functions are supported on iPhone and iPad? (Choose two)",
+    options: [
+      "Remote credential management",
+      "Encryption in Mail and for third-party apps",
+      "Wireless token synchronization",
+      "Authentication for websites in Safari and for third-party apps",
+      "Certificate authority management"
+    ],
+    correctIndex: null,
+    correctIndexes: [1, 3],
+    explanation:
+      "On iPhone and iPad, smart cards support email encryption and authentication to websites in Safari and third-party apps. Remote credential management and wireless token sync are not supported."
+  },
+  {
+    id: 14,
+    text: "Your organization wants to buy apps from multiple geographic locations. Which feature must a device management service support for this?",
+    options: [
+      "Support for a GetToken request",
+      "Support for multiple content tokens",
+      "Support for multiple device management service server tokens",
+      "Support for locations"
+    ],
+    correctIndex: 1,
+    explanation:
+      "Purchasing apps from different geographic regions requires the device management service to support multiple content tokens, one per region or Apple Business Manager location."
+  },
+  {
+    id: 15,
+    text: "On a Mac not bound to a directory service, which Network payload setting lets users reauthenticate with TLS-based credentials for 802.1X Wi-Fi after logging in?",
+    options: [
+      "Network Relay",
+      "Device Attestation",
+      "System+User",
+      "Login Window"
+    ],
+    correctIndex: 2,
+    explanation:
+      "The System+User setting allows the Mac to connect at the system level before login and then reauthenticate using the user's own TLS credentials after login, supporting 802.1X on unbound Macs."
+  },
+  {
+    id: 16,
+    text: "A user keeps getting notifications to update macOS. They turned on Do Not Disturb but still haven't updated within 24 hours after the final forced installation warning. What happens next?",
+    options: [
+      "macOS quits open apps and restarts if needed",
+      "macOS prompts the user to quit open apps and then installs the update",
+      "A new 24-hour delay starts and the administrator's rollout is paused",
+      "Notifications keep appearing until the user manually updates"
+    ],
+    correctIndex: 0,
+    explanation:
+      "After the final deadline passes without user action, macOS takes over — it quits open apps and performs a restart to complete the update, regardless of Do Not Disturb."
+  },
+  {
+    id: 17,
+    text: "Which enrollment methods result in a Mac being supervised? (Choose two)",
+    options: [
+      "Supervised enrollment",
+      "User Enrollment",
+      "Organization enrollment",
+      "Automated Device Enrollment",
+      "Account-driven Device Enrollment"
+    ],
+    correctIndex: null,
+    correctIndexes: [3, 4],
+    explanation:
+      "Automated Device Enrollment and Account-driven Device Enrollment both result in a supervised Mac. User Enrollment does not confer supervision."
+  },
+  {
+    id: 18,
+    text: "You are configuring VPN access for managed iPhones. Which device management component must include the relevant VPN setting?",
+    options: [
+      "A provisioning profile signed by Apple",
+      "A configuration profile that includes a VPN payload",
+      "A bootstrap token stored in the Secure Enclave Processor (SEP)",
+      "A payload for iPhone scoped to supervised devices"
+    ],
+    correctIndex: 1,
+    explanation:
+      "VPN settings are delivered through a configuration profile containing a VPN payload. This is the standard mechanism for pushing VPN configurations to managed devices."
+  },
+  {
+    id: 19,
+    text: "The internal storage of a Mac is removed and connected to a different computer. How is the data protected?",
+    options: [
+      "The Secure Enclave discards the encryption key when storage is removed",
+      "Volumes stay encrypted and require valid login credentials or the correct recovery key",
+      "Encryption keys transfer automatically to a secure backup location",
+      "Volume access requires device management service authentication"
+    ],
+    correctIndex: 1,
+    explanation:
+      "FileVault encryption keeps volumes encrypted at rest. Without the correct login credentials or a recovery key, the data on a physically removed drive remains inaccessible."
+  },
+  {
+    id: 20,
+    text: "You configured a declarative iOS software update with a notification deadline. What do users see 24 hours before the deadline if Do Not Disturb is off?",
+    options: [
+      "All notifications are silenced",
+      "All software update notifications are suppressed",
+      "Hourly reminders appear telling users the deadline is approaching",
+      "Do Not Disturb is turned off and all notifications resume"
+    ],
+    correctIndex: 2,
+    explanation:
+      "When Do Not Disturb is disabled, users receive hourly notifications in the 24 hours leading up to the update deadline, giving them repeated reminders to act before the forced install."
+  },
+  {
+    id: 21,
+    text: "Which statement is correct about integrating iCloud Keychain with a Managed Apple Account?",
+    options: [
+      "Managed Apple Accounts don't support iCloud Keychain recovery",
+      "iCloud Keychain escrows the user's keychain with Apple, giving Apple the ability to read passwords",
+      "Managed Apple Accounts support iCloud Keychain recovery using a recovery method",
+      "New devices joining the circle of trust must be approved by the organization's admin"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Managed Apple Accounts do support iCloud Keychain recovery. Unlike personal Apple Accounts, recovery goes through organization-approved methods rather than Apple's standard recovery flow."
+  },
+  {
+    id: 22,
+    text: "Which feature or technology locks a supervised iPhone until it is explicitly disabled?",
+    options: [
+      "Return to Service",
+      "Activation Lock",
+      "Managed Lost Mode",
+      "Managed Device Attestation"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Managed Lost Mode locks a supervised iPhone, preventing use until an administrator remotely disables it through the device management service."
+  },
+  {
+    id: 23,
+    text: "A user wants to use Find My on their iPhone, but the organization only permits sign-in with a Managed Apple Account. What should you tell the user?",
+    options: [
+      "They need a passkey to access Find My on their iPhone",
+      "Find My is removed from the iPhone",
+      "They must sign in to iCloud",
+      "Find My appears on the device but they can't actually use it"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Find My requires a personal Apple Account. When only Managed Apple Accounts are allowed, the app is visible but its functionality is unavailable to the user."
+  },
+  {
+    id: 24,
+    text: "What feature in Apple Configurator for Mac lets you automate device preparation?",
+    options: [
+      "Blueprints",
+      "Setup Assistant",
+      "Configuration Profile",
+      "Restore image"
+    ],
+    correctIndex: 0,
+    explanation:
+      "Blueprints in Apple Configurator for Mac define a set of steps and settings that are automatically applied to devices, allowing repeatable and automated device preparation."
+  },
+  {
+    id: 25,
+    text: "Your Apple TV devices have Ethernet connections and you've configured Setup Assistant to skip all panes during deployment. What is the result?",
+    options: [
+      "Apple TV requires a restart before it becomes available",
+      "Users are prompted to finish Setup Assistant later",
+      "Setup Assistant disables Ethernet until it is manually configured",
+      "Apple TV proceeds directly to the Home screen with no user input required"
+    ],
+    correctIndex: 3,
+    explanation:
+      "With Ethernet connected and all Setup Assistant panes skipped, Apple TV completes setup automatically and lands on the Home screen, requiring zero user interaction."
+  },
+  {
+    id: 26,
+    text: "Your organization has one Mac Mini deployed for content caching. Which two advanced content caching settings best help optimize internet bandwidth? (Choose two)",
+    options: [
+      "Share Peers content: content caches using custom local networks",
+      "Cache content for: devices using the same public IP address",
+      "Cache content for: devices using custom local networks",
+      "Share Peers content: content caches using the same local networks",
+      "Cache content for: devices using the same local networks"
+    ],
+    correctIndex: null,
+    correctIndexes: [1, 4],
+    explanation:
+      "Caching content for devices sharing the same public IP address and for devices on the same local network are the two settings that best reduce outbound internet traffic in a typical office deployment."
+  },
+  {
+    id: 27,
+    text: "Which statement about in-app purchases and app subscriptions in a managed environment is correct?",
+    options: [
+      "They only work when assigned to users with an unmanaged Apple Account",
+      "They are supported only when an App Store license is manually purchased",
+      "They require a Managed Apple Account signed in to the App Store",
+      "They are incompatible with Volume Purchasing through Apps and Books"
+    ],
+    correctIndex: 2,
+    explanation:
+      "In-app purchases and subscriptions in a managed context require a Managed Apple Account to be signed in to the App Store on the device."
+  },
+  {
+    id: 28,
+    text: "You want a content filter that restricts access to only a pre-approved set of professional websites. Which built-in filter option should you choose?",
+    options: [
+      "Specific websites only",
+      "Blocked sites with custom deny lists",
+      "Content filter with custom rules",
+      "All websites with parental controls"
+    ],
+    correctIndex: 0,
+    explanation:
+      "The 'Specific websites only' option creates an allowlist, permitting access exclusively to the listed URLs and blocking everything else — ideal for limiting access to approved professional sites."
+  },
+  {
+    id: 29,
+    text: "Where do you upload the Content Token to enable Managed Distribution of Apps and Books?",
+    options: [
+      "Your device management service",
+      "Your Apple Business Manager or Apple School Manager account",
+      "Your Kerberos server",
+      "Your Identity Provider system (IdP)"
+    ],
+    correctIndex: 0,
+    explanation:
+      "The Content Token generated in Apple Business Manager or Apple School Manager is uploaded into the device management service, which then uses it to assign and distribute apps and books."
+  },
+  {
+    id: 30,
+    text: "A Mac misses Automated Device Enrollment during initial setup. The user then ignores the follow-up enrollment option in System Settings. What happens?",
+    options: [
+      "The device management administrator is notified of the missed enrollment",
+      "The user is reminded every 2 hours until enrollment starts",
+      "When the Mac is idle, a full-screen setup experience reappears",
+      "The option expires after 8 hours and an administrator must manually enroll the device"
+    ],
+    correctIndex: 2,
+    explanation:
+      "If the user dismisses the enrollment prompt in System Settings, the Mac will display the full-screen Setup Assistant enrollment experience again the next time it is idle."
+  },
+  {
+    id: 31,
+    text: "A user forgot their password on an organization-owned Mac that has FileVault enabled with the key escrowed to the device management service. What can they use in macOS Recovery to reset their password?",
+    options: [
+      "Personal Recovery Key",
+      "Organizational Recovery Key",
+      "Secure Token",
+      "Bootstrap Token"
+    ],
+    correctIndex: 3,
+    explanation:
+      "The Bootstrap Token, when escrowed to the device management service, can be used in macOS Recovery to unlock FileVault and allow a password reset on an organization-owned device."
+  },
+  {
+    id: 32,
+    text: "You've set up federated authentication in Apple Business Manager. What happens when a user signs in to their Managed Apple Account?",
+    options: [
+      "The sign-in is redirected to the organization's identity provider for authentication",
+      "Apple verifies the password first, then confirms the account with the identity provider",
+      "The user is automatically migrated to a new Apple Account with a different email",
+      "The user must reset their managed Apple password"
+    ],
+    correctIndex: 0,
+    explanation:
+      "With federation enabled, Apple Business Manager redirects authentication to the organization's identity provider. The user's credentials are validated by the IdP, not by Apple directly."
+  },
+  {
+    id: 33,
+    text: "Why do organizations create Managed Apple Accounts for employees?",
+    options: [
+      "To block access to personal devices during work hours",
+      "To reclaim books that were unassigned from Managed Apple Accounts",
+      "To give users organization-owned credentials for accessing Apple services",
+      "To let users buy apps for work on their own"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Managed Apple Accounts are organization-owned credentials that give employees access to Apple services (iCloud, FaceTime, etc.) under the organization's control and policies."
+  },
+  {
+    id: 34,
+    text: "How should you configure payloads to tie specific services to specific certificates for authentication?",
+    options: [
+      "Reference certificates through external payload identifiers",
+      "Deploy all certificates in a single payload",
+      "Require users to install certificates manually before services are configured",
+      "Include the certificate and the service payload together in the same profile"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Placing the certificate payload and the service payload (e.g., Wi-Fi, VPN, email) in the same configuration profile ensures they are associated with each other and deployed as a unit."
+  },
+  {
+    id: 35,
+    text: "Which feature simplifies the initial and ongoing authentication experience on iPhone when using account-driven Device Enrollment?",
+    options: [
+      "Face ID and Touch ID",
+      "Enrollment SSO",
+      "Two-factor authentication",
+      "Platform SSO"
+    ],
+    correctIndex: 1,
+    explanation:
+      "Enrollment SSO streamlines the authentication process during account-driven Device Enrollment so users don't have to repeatedly enter credentials across multiple enrollment steps."
+  },
+  {
+    id: 36,
+    text: "A third-party app on Mac is trying to interact with devices via a system extension. How can the Mac user block this?",
+    options: [
+      "Activate Restricted Mode for accessory devices",
+      "Deny the permission the first time the third-party app requests access to the system extension",
+      "Enable stealth mode in the Firewall",
+      "Option-click the app icon and choose to deny local connections"
+    ],
+    correctIndex: 1,
+    explanation:
+      "When a third-party app requests access to a system extension for the first time, denying that prompt prevents the app from interacting with devices through that extension."
+  },
+  {
+    id: 37,
+    text: "Before deciding how many users can sign in to a Shared iPad, what must you determine first?",
+    options: [
+      "Set the device management service to automatically manage the device",
+      "Configure content caching for iCloud data to reduce network delays",
+      "Configure the device with all required apps and documents to view inventory details",
+      "Set up remote authentication to allow flexible user profile configuration"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Before configuring the user quota on Shared iPad, you need to set up remote authentication so that flexible user profiles can be managed and user sessions are properly handled."
+  },
+  {
+    id: 38,
+    text: "Which of the following are valid ways to create Managed Apple Accounts for users in an organization? (Choose two)",
+    options: [
+      "Register them in Apple Business Manager or Apple School Manager",
+      "Give users the ability to sign in with a personal Apple Account",
+      "Manually enter user details in Apple Business Manager or Apple School Manager",
+      "Assign them a device in Apple Business Manager or Apple School Manager"
+    ],
+    correctIndex: null,
+    correctIndexes: [0, 2],
+    explanation:
+      "Managed Apple Accounts can be created by registering users in ABM/ASM or by manually entering their details. Assigning a device or using personal Apple Accounts does not create Managed Apple Accounts."
+  },
+  {
+    id: 39,
+    text: "What does supervision add to a managed device?",
+    options: [
+      "The ability to manually install profiles from Settings or System Settings",
+      "Access to iCloud Backup configuration in the device management service",
+      "Enrollment on a device signed in to a Managed Apple Account",
+      "Additional restrictions and configuration options beyond standard management"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Supervision unlocks a wider set of management controls, including additional restrictions and configuration options that are unavailable on unsupervised devices."
+  },
+  {
+    id: 40,
+    text: "When using the Return to Service workflow, which two items can device management optionally include with the WipeDevice command? (Choose two)",
+    options: [
+      "Preserve Supervision Status",
+      "Enrollment Profile",
+      "Wi-Fi payload",
+      "Location Services",
+      "Register data plan"
+    ],
+    correctIndex: null,
+    correctIndexes: [1, 2],
+    explanation:
+      "The WipeDevice command used in Return to Service can optionally include an Enrollment Profile and a Wi-Fi payload so the device automatically re-enrolls and connects to the network after being wiped."
+  },
+  {
+    id: 41,
+    text: "An organization wants to deploy apps without requiring employees to use personal Apple Accounts, while retaining full ownership of app licenses. How does Apple Business Manager or Apple School Manager support this?",
+    options: [
+      "By enabling device management services to install all apps via configuration profiles",
+      "By providing departments with prepaid gift cards for app distribution",
+      "By allowing the organization to buy apps in bulk and assign licenses directly to devices",
+      "By letting users install apps from the App Store using vouchers"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Volume Purchasing through Apple Business Manager or Apple School Manager lets organizations buy app licenses in bulk and assign them to devices (not users), so no personal Apple Account is needed."
+  },
+  {
+    id: 42,
+    text: "Which feature streamlines authentication during account-driven enrollment across all Apple platforms, including Vision Pro?",
+    options: [
+      "Enrollment Single Sign-On (SSO)",
+      "Sign In with Apple at Work or School",
+      "Sign In with Apple",
+      "Biometric Authentication"
+    ],
+    correctIndex: 0,
+    explanation:
+      "Enrollment SSO allows users to authenticate once during account-driven enrollment and have that authentication carry across the enrollment steps, and it works across iPhone, iPad, Mac, and Vision Pro."
+  },
+  {
+    id: 43,
+    text: "You purchased apps in Apple Business Manager and assigned them to supervised devices. How does the device management server deliver the apps?",
+    options: [
+      "On demand, after the user accepts an email or push notification invitation",
+      "Gradually over the first day of deployment",
+      "Only when the device is connected to power and either Ethernet or Wi-Fi",
+      "Silently, as soon as the device connects to any network"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Apps assigned to supervised devices via VPP are installed silently whenever the device has a network connection — no user interaction or acceptance is required."
+  },
+  {
+    id: 44,
+    text: "How does Sign in with Apple for Work or School simplify authentication for administrators?",
+    options: [
+      "Administrators can upload user passwords for third-party logins",
+      "Sign in with Apple blocks access to third-party services unless explicitly allowed",
+      "Administrators can view and manage a list of services that use Sign in with Apple",
+      "Administrators must configure each app manually to allow access"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Sign in with Apple for Work or School gives administrators a central view of which third-party services users are accessing through that authentication method, making oversight and management easier."
+  },
+  {
+    id: 45,
+    text: "You are planning an Apple Content Caching infrastructure. Which strategy is best?",
+    options: [
+      "Use the Content Caching payload to enable authenticated content caching",
+      "Use a device management restriction to prevent content caching from being turned on for managed Macs",
+      "Use the AssetCacheManagerUtil loadCache command nightly to preload common apps",
+      "Use a device management restriction to prevent content caching from being turned off for managed Macs"
+    ],
+    correctIndex: 3,
+    explanation:
+      "The best strategy is to use a device management restriction to ensure content caching stays enabled on managed Macs — preventing users from accidentally disabling it and maintaining bandwidth optimization."
+  },
+  {
+    id: 46,
+    text: "You want to transfer App licenses to a different location in Apple Business Manager. Which licenses are eligible for transfer?",
+    options: [
+      "Only exempt licenses",
+      "Only assigned licenses",
+      "Only unassigned licenses",
+      "Both assigned and unassigned licenses"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Only unassigned licenses can be transferred between locations in Apple Business Manager. Licenses already assigned to a device or user must be unassigned first."
+  },
+  {
+    id: 47,
+    text: "You set a default device management assignment in Apple Business Manager. What is the result?",
+    options: [
+      "Already-enrolled devices of that type are automatically reassigned to the specified service",
+      "Default assignment preferences must also be set for all other device types",
+      "Newly added devices of that type are automatically assigned to the specified service",
+      "Existing devices must be manually unassigned and reassigned"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Setting a default device management assignment means that any new devices of that type added to Apple Business Manager will automatically be assigned to the designated device management service."
+  },
+  {
+    id: 48,
+    text: "How does identity federation work?",
+    options: [
+      "It configures single sign-on extensions for native applications",
+      "It manages certificate identities for smart cards and devices",
+      "It verifies user passwords against multiple authentication methods",
+      "It establishes trust between identity providers across different security solutions"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Identity federation establishes a trust relationship between identity providers, allowing users to authenticate with one provider and have that authentication recognized by connected services and systems."
+  },
+  {
+    id: 49,
+    text: "Your organization runs an on-premises device management service. IT reports that device management restrictions aren't appearing on enrolled devices. What is the most likely cause?",
+    options: [
+      "Devices aren't running the latest version of macOS",
+      "The firewall is blocking outbound TCP traffic on port 5223",
+      "The device management service is linked to Apple Business Manager or Apple School Manager",
+      "The proxy token is expired"
+    ],
+    correctIndex: 1,
+    explanation:
+      "Apple Push Notification service uses TCP port 5223 for outbound connections from devices. If a firewall blocks this port, MDM commands (including restrictions) cannot be delivered to devices."
+  },
+  {
+    id: 50,
+    text: "Which Apple technology can an identity provider use to deliver secure authentication services to apps and websites on a managed Mac?",
+    options: [
+      "Enterprise Connect",
+      "Enrollment Single Sign-On (SSO)",
+      "Digest Authentication",
+      "Single sign-on extensions (SSO)"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Single sign-on extensions (SSO) allow identity providers to plug into macOS and provide seamless, secure authentication for apps and websites without requiring users to re-enter credentials."
+  },
+  {
+    id: 51,
+    text: "Which device management configuration allows content caching to reserve a set amount of disk space on a Mac?",
+    options: [
+      "Require a Managed Apple Account",
+      "Set maximum Temporary Session number",
+      "Require an unmanaged Apple Account",
+      "Set quota size to reserve storage space"
+    ],
+    correctIndex: 3,
+    explanation:
+      "The quota size setting in the content caching payload lets you specify how much disk space the content cache can use, ensuring caching doesn't consume more storage than intended."
+  },
+  {
+    id: 52,
+    text: "Where can you find the Activation Lock bypass code stored for an organization-owned device that is enrolled in device management?",
+    options: [
+      "In the user's Managed Apple Account",
+      "In the device management solution",
+      "In the user's unmanaged Apple Account",
+      "In Apple Business Manager or Apple School Manager"
+    ],
+    correctIndex: 1,
+    explanation:
+      "When a supervised device is enrolled in MDM, the Activation Lock bypass code is stored in the device management solution, allowing administrators to unlock the device if needed."
+  },
+  {
+    id: 53,
+    text: "What can you do with Apple Configurator for Mac?",
+    options: [
+      "Buy apps and books",
+      "Use Shortcuts automations",
+      "Enable Managed Lost Mode",
+      "Push profile updates over the air"
+    ],
+    correctIndex: 3,
+    explanation:
+      "Apple Configurator for Mac can push profile updates to connected devices over the air. Buying apps and books, using Shortcuts, and enabling Managed Lost Mode are not features of Apple Configurator."
+  },
+  {
+    id: 54,
+    text: "Which two methods can you use to create Managed Apple Accounts in Apple Business Manager or Apple School Manager? (Choose two)",
+    options: [
+      "Sync users with Google Workspace",
+      "Import user credentials from a third-party device management profile",
+      "Import a list of unmanaged Apple Accounts",
+      "Upload user data using iCloud",
+      "Sync users with Microsoft Entra ID"
+    ],
+    correctIndex: null,
+    correctIndexes: [0, 4],
+    explanation:
+      "Managed Apple Accounts can be created by syncing with Google Workspace or Microsoft Entra ID. Importing unmanaged Apple Accounts or uploading via iCloud are not supported creation methods."
+  },
+  {
+    id: 55,
+    text: "User accounts are synced from an identity provider into Apple Business Manager or Apple School Manager. Which attribute(s) can you still edit?",
+    options: [
+      "Only usernames and email addresses",
+      "Only the Roles user account attribute",
+      "All user account attributes",
+      "Only device assignments and app permissions"
+    ],
+    correctIndex: 1,
+    explanation:
+      "When accounts are synced from an IdP, most attributes are controlled by the IdP and cannot be edited in ABM/ASM directly. Only the Roles attribute can be modified within Apple Business Manager or Apple School Manager."
+  },
+  {
+    id: 56,
+    text: "You have an iPhone with a CCID-compliant reader and a PIN-compatible smart card. What tasks can you use the smart card for?",
+    options: [
+      "Replacing passkeys stored in the Passwords app",
+      "Unlocking the iPhone instead of using Face ID or Touch ID",
+      "Authenticating to supported web services and signing email",
+      "Accessing settings secured by the Secure Enclave"
+    ],
+    correctIndex: 2,
+    explanation:
+      "On iPhone, a compatible smart card can be used to authenticate to supported web services and to digitally sign email — the two primary smart card use cases on iOS."
+  },
+  {
+    id: 57,
+    text: "Why do iPhone and iPad devices hold onto Wi-Fi connections longer than expected when moving between overlapping access points?",
+    options: [
+      "Their roam trigger threshold is higher than the overlap design requires",
+      "They prioritize battery efficiency over signal quality",
+      "They scan fewer channels when evaluating whether to roam",
+      "They require stronger authentication protocols before switching"
+    ],
+    correctIndex: 1,
+    explanation:
+      "Apple devices are designed to preserve battery life, which means they are conservative about scanning for and switching to a new access point. This can result in them staying on a weaker signal longer than expected."
+  },
+  {
+    id: 58,
+    text: "What do you use to skip panes during device setup and control the initial configuration of supervised devices?",
+    options: [
+      "Device Setup payload",
+      "Setup Assistant payload",
+      "Activation profile",
+      "Device configuration profile"
+    ],
+    correctIndex: 1,
+    explanation:
+      "The Setup Assistant payload in device management lets you specify which panes to skip during the initial setup of a supervised device, streamlining the out-of-box experience."
+  },
+  {
+    id: 59,
+    text: "What is required for users to upgrade their macOS software?",
+    options: [
+      "Local administrator rights",
+      "A Managed Apple Account",
+      "Volume ownership",
+      "A device management bootstrap token"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Volume ownership is required to perform macOS upgrades. A volume owner has the necessary cryptographic authority to authorize major OS changes on Apple silicon Macs."
+  },
+  {
+    id: 60,
+    text: "Your organization has multiple departments, each with its own IT team managing app licenses. What should you configure in Apple Business Manager or Apple School Manager?",
+    options: [
+      "Use VPP codes and distribute them to each department",
+      "Create one shared location and use role-based access for app licenses",
+      "Create a separate location for each department",
+      "Use redemption codes and Managed Apple Accounts for app licenses"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Creating a separate location for each department allows each IT team to independently manage its own app licenses, purchases, and assignments without interfering with other departments."
+  },
+  {
+    id: 61,
+    text: "Which type of digital certificate do Apple devices support for SSL/TLS authentication?",
+    options: [
+      "X.509 root certificates",
+      "SSH keys",
+      "SSLv2 certificates",
+      "PGP certificates"
+    ],
+    correctIndex: 0,
+    explanation:
+      "Apple devices use X.509 certificates for SSL/TLS authentication. SSH keys and PGP certificates serve different purposes and are not used for SSL/TLS; SSLv2 is deprecated and unsupported."
+  },
+  {
+    id: 62,
+    text: "Your organization wants to remotely prevent unauthorized access to macOS Recovery on Apple silicon Macs via Startup Security Utility. Which MDM command does this?",
+    options: [
+      "SetRecoveryLock",
+      "SetFirmwarePassword",
+      "PreventSystemSecurityAccess",
+      "EnableFileVault"
+    ],
+    correctIndex: 0,
+    explanation:
+      "SetRecoveryLock sets a password on Apple silicon Macs that must be entered to access macOS Recovery, preventing unauthorized users from changing security settings via Startup Security Utility."
+  },
+  {
+    id: 63,
+    text: "How can you use status items in declarative device management?",
+    options: [
+      "As expressions in activation predicates",
+      "As commands for communicating with devices",
+      "To replace the need for server communication entirely",
+      "As variables in device management commands"
+    ],
+    correctIndex: 0,
+    explanation:
+      "In declarative device management, status items represent the current state of the device and can be used as expressions in activation predicates to control when a declaration becomes active."
+  },
+  {
+    id: 64,
+    text: "Which statement correctly describes how managed books are distributed?",
+    options: [
+      "Managed books are automatically revoked when the user unenrolls",
+      "Managed books can be assigned to either users or devices interchangeably",
+      "Managed books are assigned only to users and can never be revoked or reassigned",
+      "Managed books are distributed only through redemption codes"
+    ],
+    correctIndex: 0,
+    explanation:
+      "Unlike apps, managed books are assigned to users and are automatically revoked when the user unenrolls from device management, returning the license to the organization."
+  },
+  {
+    id: 65,
+    text: "Which Wi-Fi design strategy should you prioritize for high-density environments?",
+    options: [
+      "Use the 5 GHz band for high-density enclosed spaces",
+      "Create hidden SSIDs for better performance",
+      "Disable Bonjour services on the network",
+      "Use overlapping channels in the 2.4 GHz band"
+    ],
+    correctIndex: 0,
+    explanation:
+      "The 5 GHz band has more non-overlapping channels and is better suited for high-density environments because it reduces interference and supports more simultaneous connections than 2.4 GHz."
+  },
+  {
+    id: 66,
+    text: "To generate a server token when linking a device management service in Apple Business Manager or Apple School Manager, what must you obtain from your device management service?",
+    options: [
+      "Public Key",
+      "Content Key",
+      "Private Key",
+      "Device management Intermediate Certificate"
+    ],
+    correctIndex: 0,
+    explanation:
+      "You upload the device management service's public key into Apple Business Manager or Apple School Manager, which then uses it to generate and encrypt a server token for the MDM server."
+  },
+  {
+    id: 67,
+    text: "How are Custom Apps added to Apple Business Manager or Apple School Manager?",
+    options: [
+      "The app must be signed by a valid organization certificate",
+      "The app developer asks AppleCare to assign the app",
+      "The app developer assigns the app directly to the organization",
+      "The app developer submits the app to AppleCare for review"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Custom Apps are distributed by the developer assigning the app to a specific organization in App Store Connect. The organization then sees it available in Apple Business Manager or Apple School Manager."
+  },
+  {
+    id: 68,
+    text: "What must you do in Apple Business Manager or Apple School Manager to enable zero-touch deployment?",
+    options: [
+      "Link to at least one device management service",
+      "Release assignments from previous devices",
+      "Enroll devices in device management manually",
+      "Add devices manually using Apple Configurator"
+    ],
+    correctIndex: 0,
+    explanation:
+      "Zero-touch deployment relies on Automated Device Enrollment, which requires that at least one device management service is linked to Apple Business Manager or Apple School Manager to receive device assignments."
+  },
+  {
+    id: 69,
+    text: "Your supervised iPhone prompts you to set a new numeric passcode. Which two passcode policy conditions most likely triggered this? (Choose two)",
+    options: [
+      "The current passcode has reached its maximum age and must be changed",
+      "The new passcode matches a previously used one that the MDM policy disallows",
+      "The password change policy is set to a secure random device selection",
+      "The new passcode matches one that has been used too many times before",
+      "The current passcode was entered incorrectly too many times and the device is locked"
+    ],
+    correctIndex: null,
+    correctIndexes: [0, 1],
+    explanation:
+      "A passcode change prompt is most likely triggered when the passcode has reached its maximum configured age or when the chosen passcode matches a previously used one that the MDM policy prohibits reuse of."
+  },
+  {
+    id: 70,
+    text: "Your organization enables Domain Capture in Apple Business Manager or Apple School Manager. Which two outcomes result? (Choose two)",
+    options: [
+      "The organization can no longer use the domain for directory syncing",
+      "Unmanaged Apple Accounts using the organization's domain are automatically converted to Managed Apple Accounts",
+      "Users with unmanaged Apple Accounts on the organization's domain are automatically verified",
+      "The organization can no longer use the domain for federated authentication",
+      "Domain Capture locks the domain if it wasn't previously locked"
+    ],
+    correctIndex: null,
+    correctIndexes: [2, 4],
+    explanation:
+      "When Domain Capture is enabled, users with unmanaged Apple Accounts on the organization's domain are automatically verified, and the domain becomes locked if it wasn't already. Existing unmanaged accounts are not automatically converted — only verified."
+  },
+  {
+    id: 71,
+    text: "What are two requirements for removing a verified domain from Apple Business Manager or Apple School Manager? (Choose two)",
+    options: [
+      "DNS verification TXT records are already removed",
+      "The domain uses TLS",
+      "No Managed Apple Accounts use the domain",
+      "You still own the domain",
+      "The domain isn't federated"
+    ],
+    correctIndex: null,
+    correctIndexes: [2, 4],
+    explanation:
+      "To remove a verified domain, no Managed Apple Accounts can currently be using it, and the domain must not be configured for federation. Both conditions must be met before removal is allowed."
+  },
+  {
+    id: 72,
+    text: "What is the defining characteristic of a user-owned deployment model?",
+    options: [
+      "Devices are pre-configured by the organization and cannot be changed afterward",
+      "Users must sign a release form to enroll their device in device management",
+      "Users configure their personal devices and enroll them in the organization's device management",
+      "Device ownership must be transferred to the organization for enrollment to work"
+    ],
+    correctIndex: 2,
+    explanation:
+      "In user-owned (BYOD) deployment, employees bring their personal devices, configure them as needed, and choose to enroll in the organization's MDM to access work resources while retaining personal ownership."
+  },
+  {
+    id: 73,
+    text: "Your Wi-Fi network broadcasts on 2.4 GHz, 5 GHz, and 6 GHz. What must be true for iPhones to connect to the 5 GHz or 6 GHz bands?",
+    options: [
+      "The Wi-Fi payload must manually configure each band",
+      "Auto-join must be configured for the 6 GHz band only",
+      "The network RSSI is less than the connection threshold",
+      "The network RSSI is greater than the connection threshold"
+    ],
+    correctIndex: 3,
+    explanation:
+      "For an iPhone to connect to a 5 GHz or 6 GHz band, the received signal strength (RSSI) from that access point must exceed the device's connection threshold — ensuring a strong enough signal before joining."
+  },
+  {
+    id: 74,
+    text: "When does the Kerberos SSO extension activate on iPhone and iPad?",
+    options: [
+      "During initial device management enrollment",
+      "Immediately after organizational network connectivity is detected",
+      "Only after receiving an HTTP 401 Negotiate authentication challenge",
+      "When users manually initiate authentication through Settings"
+    ],
+    correctIndex: 2,
+    explanation:
+      "The Kerberos SSO extension activates on demand — specifically when the device receives an HTTP 401 Negotiate challenge from a server requesting Kerberos authentication."
+  },
+  {
+    id: 75,
+    text: "What happens when a device management enrollment profile is removed from a device?",
+    options: [
+      "The device resets to factory settings",
+      "The device must be restored using Apple Configurator",
+      "Managed profiles and managed apps are removed",
+      "The user is prompted to re-enroll"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Removing the MDM enrollment profile triggers the removal of all managed configuration profiles and managed apps that were installed through device management."
+  },
+  {
+    id: 76,
+    text: "What happens if you skip creating a local macOS account during Automated Device Enrollment setup?",
+    options: [
+      "The setup process fails entirely",
+      "The user's Managed Apple Account is used as a local account",
+      "The user can log in using a network account or any local account once enrollment finishes",
+      "The user is notified that their Mac is only partially set up"
+    ],
+    correctIndex: 2,
+    explanation:
+      "Skipping local account creation during ADE setup is valid. After enrollment completes, the user can sign in with a network account or create a local account at that point."
+  },
+  {
+    id: 77,
+    text: "Which command shows the current configuration of the content cache on a Mac?",
+    options: [
+      "AssetCacheManagerUtil status",
+      "AssetCacheManagerUtil info",
+      "AssetCacheManagerUtil settings",
+      "AssetCacheManagerUtil showPrefs"
+    ],
+    correctIndex: 0,
+    explanation:
+      "The 'AssetCacheManagerUtil status' command displays the current configuration and state of the content cache, including whether it is active, the cache size, and what types of content it is caching."
+  },
+  {
+    id: 78,
+    text: "Which organizational role must the contact fulfill during the Apple Business Manager verification process?",
+    options: [
+      "Certified IT administrator",
+      "Legal representative",
+      "Manager or area manager listed on the organization's website",
+      "External consultant designated by the organization"
+    ],
+    correctIndex: 1,
+    explanation:
+      "Apple requires a legal representative of the organization to complete the verification process for Apple Business Manager, ensuring the account is created by someone with authority to bind the organization."
+  },
+  {
+    id: 79,
+    text: "How can you manage access to beta releases of Apple operating systems using device management?",
+    options: [
+      "Configure device management to restrict beta updates",
+      "Enroll devices in Mac Evaluation Utility using device management",
+      "Configure device management to restrict Mac Evaluation Utility",
+      "Configure device management to access Feedback Assistant"
+    ],
+    correctIndex: 0,
+    explanation:
+      "Device management can deploy a restriction that prevents devices from installing beta OS releases, ensuring only approved, stable OS versions are running on managed devices."
+  },
+  {
+    id: 80,
+    text: "Your organization supports employees using personal devices for work and wants to protect user privacy. Which enrollment method should you use?",
+    options: [
+      "Account-driven Device Enrollment",
+      "Account-driven User Enrollment",
+      "Automated Device Enrollment",
+      "Manual Configuration Profile Enrollment"
+    ],
+    correctIndex: 1,
+    explanation:
+      "Account-driven User Enrollment is designed for BYOD scenarios. It creates a managed APFS volume for work data, keeping personal data separate and invisible to the organization, while still allowing MDM to manage work-related apps and accounts."
+  }
+];
+
+</script>
+<script>
+// ── Utility ──────────────────────────────────────────────────────────────────
+function shuffle(arr){
+  // Fisher-Yates with crypto-quality random
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function getCorrects(q){
+  if(q.correctIndexes) return q.correctIndexes;
+  return [q.correctIndex];
+}
+
+function isMulti(q){ return !!(q.correctIndexes && q.correctIndexes.length>1); }
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let quizQuestions=[], currentIndex=0;
+// userAnswers[i] = array of selected indexes (or empty [])
+let userAnswers=[];
+// checkedState[i] = true if user clicked "Check Answer" for this q
+let checkedState=[];
+
+// ── DOM refs ──────────────────────────────────────────────────────────────────
+const startScreen=document.getElementById('start-screen');
+const quizScreen=document.getElementById('quiz-screen');
+const resultScreen=document.getElementById('result-screen');
+const qciInput=document.getElementById('question-count-input');
+const startBtn=document.getElementById('start-btn');
+const qCurrent=document.getElementById('q-current');
+const qTotal=document.getElementById('q-total');
+const answeredBadge=document.getElementById('answered-badge');
+const progressBar=document.getElementById('progress-bar');
+const qTypeBadge=document.getElementById('q-type-badge');
+const questionText=document.getElementById('question-text');
+const optionsList=document.getElementById('options-list');
+const feedbackArea=document.getElementById('feedback-area');
+const prevBtn=document.getElementById('prev-btn');
+const nextBtn=document.getElementById('next-btn');
+const checkBtn=document.getElementById('check-btn');
+const submitBtn=document.getElementById('submit-btn');
+const scorePct=document.getElementById('score-pct');
+const resultTitle=document.getElementById('result-title');
+const resultSub=document.getElementById('result-sub');
+const rsCorrect=document.getElementById('rs-correct');
+const rsWrong=document.getElementById('rs-wrong');
+const rsSkip=document.getElementById('rs-skip');
+const reviewBtn=document.getElementById('review-btn');
+const restartBtn=document.getElementById('restart-btn');
+const reviewList=document.getElementById('review-list');
+
+// ── Init stats on load ────────────────────────────────────────────────────────
+document.getElementById('total-q-count').textContent=QUESTIONS.length;
+document.getElementById('multi-q-count').textContent=QUESTIONS.filter(isMulti).length;
+qciInput.max=QUESTIONS.length;
+
+// ── Start ─────────────────────────────────────────────────────────────────────
+startBtn.addEventListener('click',()=>{
+  let n=parseInt(qciInput.value)||20;
+  n=Math.max(1,Math.min(n,QUESTIONS.length));
+  quizQuestions=shuffle([...QUESTIONS]).slice(0,n);
+  userAnswers=quizQuestions.map(()=>[]);
+  checkedState=quizQuestions.map(()=>false);
+  currentIndex=0;
+  startScreen.classList.add('hidden');
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  render();
+});
+
+// ── Render question ───────────────────────────────────────────────────────────
+function render(){
+  const q=quizQuestions[currentIndex];
+  const multi=isMulti(q);
+  const checked=checkedState[currentIndex];
+
+  qCurrent.textContent=currentIndex+1;
+  qTotal.textContent=quizQuestions.length;
+  const answeredCount=userAnswers.filter(a=>a.length>0).length;
+  answeredBadge.textContent=answeredCount+' answered';
+  progressBar.style.width=((currentIndex+1)/quizQuestions.length*100)+'%';
+
+  qTypeBadge.textContent=multi?'Choose '+getCorrects(q).length+' answers':'Single answer';
+  qTypeBadge.className='question-type-badge '+(multi?'multi':'single');
+  questionText.textContent=q.text;
+
+  optionsList.innerHTML='';
+  const corrects=getCorrects(q);
+
+  q.options.forEach((opt,idx)=>{
+    const li=document.createElement('li');
+    li.className='option-item';
+
+    const inp=document.createElement('input');
+    inp.type=multi?'checkbox':'radio';
+    inp.name='opt';
+    inp.id='opt'+idx;
+    inp.value=idx;
+    if(userAnswers[currentIndex].includes(idx)) inp.checked=true;
+    if(checked) inp.disabled=true;
+
+    const lbl=document.createElement('label');
+    lbl.htmlFor='opt'+idx;
+    lbl.className='option-label';
+
+    const chk=document.createElement('span');
+    chk.className='option-check'+(multi?' multi-check':'');
+    lbl.appendChild(chk);
+    lbl.append(' '+opt);
+
+    if(checked){
+      const userPicked=userAnswers[currentIndex].includes(idx);
+      const isCorrect=corrects.includes(idx);
+      if(isCorrect){
+        li.classList.add('correct-ans');
+      } else if(userPicked && !isCorrect){
+        li.classList.add('wrong-pick');
+        // show why wrong below option
+        const why=document.createElement('div');
+        why.className='why-wrong';
+        why.textContent='✗ Incorrect choice';
+        li.appendChild(why);
+      }
+      // highlight missed correct answers
+      if(isCorrect && !userPicked && userAnswers[currentIndex].length>0){
+        li.classList.add('missed-ans');
+        const why=document.createElement('div');
+        why.className='why-correct-alt';
+        why.textContent='← You missed this correct answer';
+        li.appendChild(why);
+      }
+    }
+
+    li.insertBefore(inp,li.firstChild);
+    li.insertBefore(lbl,li.children[1]);
+    optionsList.appendChild(li);
+  });
+
+  // feedback box
+  feedbackArea.innerHTML='';
+  if(checked){
+    const ua=userAnswers[currentIndex];
+    const pass=ua.length>0 && corrects.every(c=>ua.includes(c)) && ua.every(u=>corrects.includes(u));
+    const box=document.createElement('div');
+    box.className='feedback-box '+(pass?'pass':'fail');
+    const verdict=document.createElement('div');
+    verdict.className='fb-verdict '+(pass?'pass':'fail');
+    verdict.innerHTML=(pass?'<span>✓</span> Correct!':'<span>✗</span> '+(ua.length===0?'No answer given':'Incorrect'));
+    box.appendChild(verdict);
+    if(q.explanation){
+      const exp=document.createElement('div');
+      exp.className='fb-exp';
+      exp.textContent=q.explanation;
+      box.appendChild(exp);
+    }
+    feedbackArea.appendChild(box);
+    checkBtn.disabled=true;
+  } else {
+    checkBtn.disabled=false;
+  }
+
+  prevBtn.disabled=currentIndex===0;
+  nextBtn.disabled=currentIndex===quizQuestions.length-1;
+}
+
+// ── Capture current selections ────────────────────────────────────────────────
+function captureSelections(){
+  const inputs=[...document.querySelectorAll('#options-list input')];
+  userAnswers[currentIndex]=inputs.filter(i=>i.checked).map(i=>parseInt(i.value));
+}
+
+// ── Check answer ──────────────────────────────────────────────────────────────
+checkBtn.addEventListener('click',()=>{
+  captureSelections();
+  if(userAnswers[currentIndex].length===0){
+    // warn but still allow checking with no answer
+  }
+  checkedState[currentIndex]=true;
+  render();
+});
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+prevBtn.addEventListener('click',()=>{
+  captureSelections();
+  if(currentIndex>0){currentIndex--;render();}
+});
+nextBtn.addEventListener('click',()=>{
+  captureSelections();
+  if(currentIndex<quizQuestions.length-1){currentIndex++;render();}
+});
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+submitBtn.addEventListener('click',()=>{
+  captureSelections();
+  const unanswered=userAnswers.filter(a=>a.length===0).length;
+  if(unanswered>0 && !confirm(unanswered+' question(s) unanswered. Submit anyway?')) return;
+  showResults();
+});
+
+function computeScore(){
+  let correct=0,wrong=0,skipped=0;
+  quizQuestions.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const corrects=getCorrects(q);
+    if(ua.length===0){skipped++;}
+    else if(corrects.every(c=>ua.includes(c))&&ua.every(u=>corrects.includes(u))){correct++;}
+    else{wrong++;}
+  });
+  return{correct,wrong,skipped};
+}
+
+function showResults(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  reviewList.classList.add('hidden');
+  reviewList.innerHTML='';
+
+  const{correct,wrong,skipped}=computeScore();
+  const total=quizQuestions.length;
+  const pct=Math.round(correct/total*100);
+
+  scorePct.textContent=pct+'%';
+  rsCorrect.textContent=correct;
+  rsWrong.textContent=wrong;
+  rsSkip.textContent=skipped;
+
+  let title='Keep practising!';
+  let sub='Review the answers below to strengthen your knowledge.';
+  if(pct>=90){title='Outstanding!';sub='Excellent work — you\'re exam ready.';}
+  else if(pct>=75){title='Well done!';sub='Strong result. Review the missed questions.';}
+  else if(pct>=60){title='Good effort';sub='You\'re on the right track. Keep studying.';}
+  resultTitle.textContent=title;
+  resultSub.textContent=pct+' / 100 — '+correct+' correct out of '+total+' questions';
+}
+
+// ── Review ─────────────────────────────────────────────────────────────────────
+reviewBtn.addEventListener('click',()=>{
+  if(!reviewList.classList.contains('hidden')){
+    reviewList.classList.add('hidden');
+    reviewBtn.textContent='Review All Answers';
+    return;
+  }
+  reviewList.classList.remove('hidden');
+  reviewBtn.textContent='Hide Review';
+  reviewList.innerHTML='';
+
+  quizQuestions.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const corrects=getCorrects(q);
+    const pass=ua.length>0&&corrects.every(c=>ua.includes(c))&&ua.every(u=>corrects.includes(u));
+
+    const item=document.createElement('div');
+    item.className='review-item';
+
+    const hdr=document.createElement('div');
+    hdr.className='review-item-header';
+    hdr.innerHTML=
+      '<div class="ri-icon '+(pass?'pass':'fail')+'">'+(pass?'✓':'✗')+'</div>'+
+      '<div class="ri-q">Q'+(i+1)+': '+q.text+'</div>'+
+      '<div class="ri-chevron">▼</div>';
+
+    const body=document.createElement('div');
+    body.className='review-item-body';
+
+    // your answer
+    const yourDiv=document.createElement('div');
+    yourDiv.className='rb-your';
+    const yourTag=document.createElement('span');
+    yourTag.className='rb-tag '+(pass?'y-pass':'y-fail');
+    yourTag.textContent='You';
+    yourDiv.appendChild(yourTag);
+    const yourText=document.createElement('span');
+    yourText.textContent=ua.length===0?'(no answer)':ua.map(idx=>q.options[idx]).join(', ');
+    yourDiv.appendChild(yourText);
+    body.appendChild(yourDiv);
+
+    // correct answer (if wrong)
+    if(!pass){
+      const corrDiv=document.createElement('div');
+      corrDiv.className='rb-your';
+      const corrTag=document.createElement('span');
+      corrTag.className='rb-tag correct';
+      corrTag.textContent='Correct';
+      corrDiv.appendChild(corrTag);
+      const corrText=document.createElement('span');
+      corrText.textContent=corrects.map(idx=>q.options[idx]).join(', ');
+      corrDiv.appendChild(corrText);
+      body.appendChild(corrDiv);
+    }
+
+    // explanation
+    if(q.explanation){
+      const exp=document.createElement('div');
+      exp.className='rb-exp';
+      exp.textContent=q.explanation;
+      body.appendChild(exp);
+    }
+
+    hdr.addEventListener('click',()=>{
+      item.classList.toggle('open');
+    });
+
+    item.appendChild(hdr);
+    item.appendChild(body);
+    reviewList.appendChild(item);
+  });
+});
+
+// ── Restart ────────────────────────────────────────────────────────────────────
+restartBtn.addEventListener('click',()=>{
+  resultScreen.classList.add('hidden');
+  startScreen.classList.remove('hidden');
+});
+</script>
+</body>
+</html>
